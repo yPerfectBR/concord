@@ -259,11 +259,11 @@ const VOICE_OUTPUT_STATS_LOG_INTERVAL: Duration = Duration::from_secs(5);
 const VOICE_PLAYBACK_POLL_SAMPLES_PER_CHANNEL: usize = 480;
 #[cfg(feature = "voice-playback")]
 const VOICE_TRANSMIT_STATS_LOG_INTERVAL: Duration = Duration::from_secs(5);
-const VOICE_PLAYBACK_JITTER_BUFFER_DELAY: Duration = Duration::from_millis(60);
-const VOICE_PLAYBACK_MAX_BUFFERED_FRAMES_PER_SSRC: usize = 32;
+const VOICE_PLAYBACK_JITTER_BUFFER_DELAY: Duration = Duration::from_millis(120);
+const VOICE_PLAYBACK_MAX_BUFFERED_FRAMES_PER_SSRC: usize = 48;
 const VOICE_PLAYBACK_MAX_CONSECUTIVE_PLC_FRAMES: usize = 5;
 #[cfg(feature = "voice-playback")]
-const VOICE_OUTPUT_UNDERRUN_FADE_MILLIS: u32 = 5;
+const VOICE_OUTPUT_UNDERRUN_FADE_MILLIS: u32 = 10;
 
 /// Keeps boosted capture and playback samples bounded without flattening every
 /// peak to the same hard-clipped value.
@@ -285,9 +285,9 @@ const VOICE_OUTPUT_LOW_PASS_CUTOFF_HZ: f32 = 8_000.0;
 #[cfg(feature = "voice-playback")]
 const VOICE_AUDIO_OUTPUT_QUEUE: usize = 64;
 #[cfg(feature = "voice-playback")]
-const VOICE_AUDIO_OUTPUT_PREBUFFER_FRAMES: u64 = DISCORD_VOICE_SAMPLE_RATE as u64 * 60 / 1_000;
+const VOICE_AUDIO_OUTPUT_PREBUFFER_FRAMES: u64 = DISCORD_VOICE_SAMPLE_RATE as u64 * 120 / 1_000;
 #[cfg(feature = "voice-playback")]
-const VOICE_PULSE_OUTPUT_BUFFER_FRAMES: u32 = 2_400;
+const VOICE_PULSE_OUTPUT_BUFFER_FRAMES: u32 = 4_800;
 const AEAD_AES256_GCM_RTPSIZE: &str = "aead_aes256_gcm_rtpsize";
 const AEAD_XCHACHA20_POLY1305_RTPSIZE: &str = "aead_xchacha20_poly1305_rtpsize";
 const VOICE_REMOTE_SPEAKING_TTL: Duration = Duration::from_millis(500);

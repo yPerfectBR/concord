@@ -1158,10 +1158,10 @@ fn voice_audio_buffer_fades_short_underruns() {
 #[test]
 fn voice_output_prebuffer_includes_one_device_callback() {
     let cases = [
-        (4_096, 48_000, 6_976),
-        (96_000, 48_000, 98_880),
-        (4_096, 192_000, 3_904),
-        (4_096, 24_000, 11_072),
+        (4_096, 48_000, 9_856),
+        (96_000, 48_000, 101_760),
+        (4_096, 192_000, 6_784),
+        (4_096, 24_000, 13_952),
     ];
 
     for (callback_frames, output_sample_rate, expected) in cases {
@@ -1177,11 +1177,11 @@ fn voice_output_prebuffer_includes_one_device_callback() {
     let stats = Arc::new(VoiceAudioOutputStats::default());
     let mut buffer = VoiceAudioBuffer::new(rx, DISCORD_VOICE_SAMPLE_RATE, Arc::clone(&stats));
 
-    stats.queued_frames.store(6_975, Ordering::Relaxed);
+    stats.queued_frames.store(9_855, Ordering::Relaxed);
     buffer.begin_output(4_096);
     assert_eq!(buffer.next_stereo_frame(), None);
 
-    stats.queued_frames.store(6_976, Ordering::Relaxed);
+    stats.queued_frames.store(9_856, Ordering::Relaxed);
     buffer.begin_output(4_096);
     assert_eq!(buffer.next_stereo_frame(), Some([1.0, -1.0]));
 }
@@ -2465,7 +2465,7 @@ fn voice_output_buffer_size_requests_bounded_low_latency_buffer() {
                 min: 4_096,
                 max: 8_192,
             },
-            cpal::BufferSize::Fixed(4_096),
+            cpal::BufferSize::Fixed(4_800),
         ),
         (
             true,
