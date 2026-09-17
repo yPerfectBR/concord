@@ -99,6 +99,10 @@ impl ChannelState {
         matches!(self.kind.as_str(), "voice" | "GuildVoice")
     }
 
+    pub fn is_stage(&self) -> bool {
+        matches!(self.kind.as_str(), "stage" | "GuildStageVoice")
+    }
+
     /// A 1:1 DM or a group DM. Unlike [`Self::is_dm`], this also matches group
     /// DMs, which together are the channels that support a private call.
     pub fn is_dm_or_group_dm(&self) -> bool {

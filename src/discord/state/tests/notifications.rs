@@ -134,6 +134,63 @@ fn notification_flags_drive_low_priority_mentions_and_sidebar_visibility() {
 }
 
 #[test]
+fn sidebar_keeps_voice_channels_visible_despite_opt_in_and_hide_muted() {
+    let guild_id = Id::new(1);
+    let voice_channel_id = Id::new(2);
+    let hidden_text_id = Id::new(3);
+    let current_user_id = Id::new(10);
+    let mut settings = notification_settings(guild_id, NotificationLevel::NoMessages);
+    // Guild opt-in ON: non-opted text channels hide; voice must still show.
+    settings.flags = 1 << 14;
+    settings.hide_muted_channels = true;
+    settings
+        .channel_overrides
+        .push(ChannelNotificationOverrideInfo {
+            muted: true,
+            ..ChannelNotificationOverrideInfo::test(voice_channel_id)
+        });
+    settings
+        .channel_overrides
+        .push(ChannelNotificationOverrideInfo {
+            muted: true,
+            ..ChannelNotificationOverrideInfo::test(hidden_text_id)
+        });
+
+    let mut state = DiscordState::default();
+    state.apply_event(&AppEvent::Ready {
+        user: "me".to_owned(),
+        user_id: Some(current_user_id),
+    });
+    state.apply_event(&guild_create_event(GuildCreateFixture {
+        guild_id,
+        channels: vec![
+            ChannelInfo {
+                guild_id: Some(guild_id),
+                name: "lo-fi".to_owned(),
+                ..channel_info(voice_channel_id, "GuildVoice", Vec::new())
+            },
+            ChannelInfo {
+                guild_id: Some(guild_id),
+                name: "hidden-text".to_owned(),
+                ..channel_info(hidden_text_id, "GuildText", Vec::new())
+            },
+        ],
+        ..GuildCreateFixture::new(guild_id)
+    }));
+    state.apply_event(&user_guild_settings_init(vec![settings]));
+
+    assert_eq!(
+        state
+            .sidebar_channels_for_guild(Some(guild_id))
+            .into_iter()
+            .map(|channel| channel.id)
+            .collect::<Vec<_>>(),
+        vec![voice_channel_id],
+        "muted voice channels stay visible like the Discord client"
+    );
+}
+
+#[test]
 fn loaded_guild_messages_use_notification_numeric_badge() {
     let guild_id = Id::new(1);
     let channel_id = Id::new(2);

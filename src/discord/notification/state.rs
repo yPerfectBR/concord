@@ -98,6 +98,12 @@ impl DiscordState {
         let Some(channel) = self.navigation.channels.get(&channel_id) else {
             return true;
         };
+        // Discord keeps guild voice/stage channels in the sidebar even when
+        // hide-muted or channel opt-in would hide text channels. Matching that
+        // avoids empty voice categories and missing occupied calls.
+        if channel.is_voice() || channel.is_stage() {
+            return true;
+        }
         let settings = self.notification_settings_for_channel(channel_id);
         let Some(settings) = settings else {
             return true;
